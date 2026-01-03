@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SMAP Result</title>
+<style>
+ body{font-family:Arial;background:#f4f6f8;padding:40px;}
+ .box{background:white;padding:30px;border-radius:12px;max-width:750px;margin:auto;}
+ .meter{height:40px;background:#ddd;border-radius:25px;overflow:hidden;margin:20px 0;}
+ .fill{
+   height:100%;
+   font-size:18px;
+   font-weight:bold;
+   color:white;
+   display:flex;
+   align-items:center;
+   justify-content:center;
+ }
+ .highlight{
+   font-size:22px;
+   font-weight:bold;
+   padding:10px;
+   border-radius:8px;
+ }
+ button{padding:12px 25px;background:#28a745;color:white;border:none;border-radius:6px;}
+</style>
+</head>
+<body>
+
+<div class="box">
+<h2>🧠 Addiction Level</h2>
+
+<div class="highlight">{{ prediction }}</div>
+
+<div class="meter">
+ <div class="fill" id="fill"></div>
+</div>
+
+
+<h3>🤖 Personalized Improvement Suggestions</h3>
+<p style="white-space:pre-line;">{{ suggestions }}</p>
+
+<br>
+<a href="/"><button>Predict Another</button></a>
+</div>
+
+<script>
+let p="{{ prediction }}";
+let f=document.getElementById("fill");
+
+let map={
+ "Not Addicted":["20%","#16a34a"],
+ "Low Addiction":["40%","#65a30d"],
+ "Moderate Addiction":["60%","#ca8a04"],
+ "High Addiction":["80%","#ea580c"],
+ "Severe Addiction":["100%","#dc2626"]
+};
+
+f.style.width=map[p][0];
+f.style.background=map[p][1];
+f.innerText=p;
+</script>
+
+</body>
+</html>
