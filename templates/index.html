@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SMAP</title>
+<style>
+ body { font-family: Arial; background:#eef2f7; padding:40px; }
+ .card { background:white; padding:30px; border-radius:12px; max-width:650px; margin:auto; text-align:center; }
+ h1 { font-size:42px; margin-bottom:5px; }
+ h3 { font-weight:normal; color:#555; margin-bottom:25px; }
+
+ .progress-container { background:#ddd; border-radius:20px; margin:20px 0; }
+ .progress-bar { height:14px; width:0%; background:#007bff; border-radius:20px; transition:0.3s; }
+
+ button { padding:12px 25px; background:#007bff; color:white; border:none; border-radius:6px; cursor:pointer; }
+ select { width:100%; padding:12px; margin:15px 0; }
+</style>
+</head>
+<body>
+
+<div class="card">
+
+<h1>SMAP</h1>
+<h3>Social Media Addiction Prediction</h3>
+
+<button id="startBtn" onclick="start()">🚀 Begin Prediction</button>
+
+<div id="quiz" style="display:none">
+
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <h2 id="question"></h2>
+
+  <form id="form" method="POST" action="/predict">
+    <div id="inputArea"></div>
+    <div id="hiddenInputs"></div>
+    <button type="button" onclick="nextQuestion()">Next</button>
+  </form>
+
+</div>
+</div>
+
+<script>
+function start(){
+ document.getElementById("startBtn").style.display="none";
+ document.getElementById("quiz").style.display="block";
+ render();
+}
+
+const questions = [
+ {name:"Age",q:"What is your age?",type:"number"},
+
+ {name:"Gender",q:"Your gender?",options:[
+  ["0","Male"],["1","Female"],["2","Other"]
+ ]},
+
+ {name:"Avg_Social_Media_Usage",q:"Daily social media usage?",options:[
+  ["1","10–30 min"],["2","31–60 min"],["3","61–90 min"],
+  ["4","91–120 min"],["5","121–150 min"],["6","150–180 min"],["7",">180 min"]
+ ]},
+
+ {name:"Dominant_Platform",q:"Most used platform?",options:[
+  ["0","Facebook"],["1","Instagram"],["2","Snapchat"],["3","WhatsApp"],["4","Twitter"]
+ ]},
+
+ {name:"Checking_Frequency",q:"Checking frequency?",options:[
+  ["1","<5"],["2","5–10"],["3","11–15"],["4",">20"]
+ ]},
+
+ {name:"Pre_Sleep_Usage",q:"Usage before sleep?",options:[
+  ["1","0–5 min"],["2","6–10"],["3","11–15"],["4","16–20"],["5",">20"]
+ ]},
+
+ {name:"Content_Type",q:"Content type?",options:[
+  ["0","Entertainment"],["1","News"],["2","Social Interaction"]
+ ]},
+
+ {name:"Sleep_Latency",q:"Time to fall asleep?",options:[
+  ["1","<10 min"],["2","10–15"],["3","16–20"],["4","21–25"],["5",">30"]
+ ]},
+
+ {name:"Total_Sleep_Time",q:"Total sleep time?",options:[
+  ["1","4–5 hrs"],["2","5–6 hrs"],["3","6–7 hrs"],["4","7–8 hrs"],["5",">8 hrs"]
+ ]},
+
+ {name:"Sleep_Efficiency",q:"Sleep efficiency?",options:[
+  ["1","50–60%"],["2","61–70%"],["3","71–80%"],["4","81–90%"],["5","91–100%"]
+ ]},
+
+ // ALL 1–5 QUESTIONS → DROPDOWN
+ {name:"Sleep_Quality",q:"Sleep quality?",scale:true},
+ {name:"Wake_After_Sleep_Onset",q:"Wake after sleep onset?",options:[
+  ["1","0–5 min"],["2","6–10"],["3","11–15"],["4","16–20"],["5",">20"]
+ ]},
+ {name:"Awakenings",q:"Night awakenings?",options:[
+  ["1","0–1"],["2","2–3"],["3","4–5"],["4",">5"]
+ ]},
+ {name:"Ease_of_Sleep",q:"Ease of sleep?",options:[
+  ["1","Very easy"],["2","Fairly easy"],["3","Difficult"],["4","Very difficult"]
+ ]},
+ {name:"Stress_Cortisol",q:"Stress level?",scale:true},
+ {name:"Blue_Light",q:"Blue light exposure?",options:[
+  ["1","0–20 min"],["2","21–40"],["3","41–60"],["4","1–2 hrs"],["5",">2 hrs"]
+ ]},
+ {name:"Stress_Level",q:"Stress rating?",scale:true},
+ {name:"Anxiety_Depression",q:"Anxiety/Depression level?",scale:true},
+ {name:"Restlessness",q:"Restlessness?",scale:true},
+ {name:"Interest_Fluctuation",q:"Interest fluctuation?",scale:true},
+
+ {name:"Relationship_Status",q:"Relationship status?",options:[
+  ["0","Single"],["1","In a relationship"]
+ ]},
+
+ {name:"Loneliness",q:"Loneliness feeling?",scale:true}
+];
+
+let i=0, answers={};
+
+function nextQuestion(){
+ let val=document.getElementById("answer").value;
+ answers[questions[i].name]=val;
+ i++;
+ render();
+}
+
+function render(){
+ document.getElementById("progressBar").style.width=(i/questions.length*100)+"%";
+
+ if(i===questions.length){
+  let h=document.getElementById("hiddenInputs");
+  for(let k in answers){
+   h.innerHTML+=`<input type="hidden" name="${k}" value="${answers[k]}">`;
+  }
+  document.getElementById("form").submit();
+  return;
+ }
+
+ let q=questions[i];
+ document.getElementById("question").innerText=q.q;
+
+ if(q.scale){
+  document.getElementById("inputArea").innerHTML=
+   `<select id="answer">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>`;
+ }
+ else if(q.options){
+  document.getElementById("inputArea").innerHTML=
+   `<select id="answer">${q.options.map(o=>`<option value="${o[0]}">${o[1]}</option>`).join("")}</select>`;
+ }
+ else{
+  document.getElementById("inputArea").innerHTML=
+   `<select id="answer">${[...Array(80)].map((_,i)=>`<option>${i+10}</option>`).join("")}</select>`;
+ }
+}
+</script>
+
+</body>
+</html>
