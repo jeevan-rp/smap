@@ -8,7 +8,7 @@ app = Flask(__name__)
 model = joblib.load("model.pkl")
 scaler = joblib.load("scaler.pkl")
 
-genai.configure(api_key="AIzaSyAOWEYpaTpsYbT6GXBx1HPH5WB_ltn7gP0")
+genai.configure(api_key="d")
 gemini_model = genai.GenerativeModel("gemini-2.5-flash")
 
 labels = {
@@ -63,3 +63,4 @@ make personalized suggestion max 4 lines , highlight the key areas to focus on.
 
 if __name__ == "__main__":
     app.run(debug=True)
+
